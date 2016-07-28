@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="10dp"
+    tools:context="10dp">
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:id="@+id/txt1"
+        android:layout_marginTop="87dp"
+        android:hint="Username"
+        android:textAlignment="center"
+        android:background="@drawable/textbox"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/txt2" />
+
+    <EditText
+        android:layout_width="300dp"
+        android:layout_height="75dp"
+        android:inputType="textPassword"
+        android:hint="Password"
+        android:textAlignment="center"
+        android:id="@+id/txt2"
+        android:background="@drawable/textbox"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign In"
+        android:onClick="signin"
+        android:id="@+id/btn1"
+        android:textColor="@color/white"
+        android:background="@drawable/button"
+        android:layout_below="@+id/txt2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:id="@+id/btn2"
+        android:onClick="register"
+        android:textColor="@color/white"
+        android:background="@drawable/button"
+        android:layout_below="@+id/btn1"
+        android:layout_alignStart="@+id/btn1"
+        android:layout_marginTop="42dp" />
+</RelativeLayout>
