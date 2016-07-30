@@ -44,15 +44,17 @@ public class DevPage extends AppCompatActivity {
         pos = intent.getExtras().getInt("position");
         final ArrayList<Devices> devlist = user.getRooms().get(pos).getDev();
         gridView = (GridView) findViewById(R.id.gridView2);
-        gridView.setAdapter(new DevAdapter(this, devlist));
+        gridView.setAdapter(new DevAdapter(this, devlist,user,pos));
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 System.out.println(position);
                 if (position < devlist.size()) {
                     Intent intent = new Intent(getApplicationContext(), Stats.class);
+                    intent.putExtra("user",user);
                     intent.putExtra("devlist", devlist);
                     intent.putExtra("pos", position);
+                    intent.putExtra("posroom",pos);
 
                     startActivity(intent);
                 } else if (position == devlist.size()) {

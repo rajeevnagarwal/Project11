@@ -68,7 +68,6 @@ public class home extends AppCompatActivity {
     }
     public void register(View v)
     {
-
         Intent i = new Intent(this,Register.class);
         startActivity(i);
     }
@@ -111,19 +110,23 @@ public class home extends AppCompatActivity {
             catch(ConnectException e)
             {
                 result = "Connection Error";
+                //result = "{\"name\":\"Rajeev\",\"username\":\"rajeev14084\",\"password\":\"sdgs\",\"rooms\":[{\"name\":\"Dining Room\",\"devices\":[{\"name\":\"fan\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"192.167.0.8\",\"Port\":\"89\"}]},{\"name\":\"Play\",\"devices\":[{\"name\":\"Fan\",\"status\":false,\"IP_Addr\":\"157.89.89.88\",\"Port\":\"80\"},{\"name\":\"Bulb\",\"status\":false,\"IP_Addr\":\"35.78.79.65\",\"Port\":\"80\"}]},{\"name\":\"Hall\",\"devices\":[{\"name\":\"Camera\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"TV\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"}]},{\"name\":\"Bed Room\",\"devices\":[{\"name\":\"bulb\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"477\",\"Port\":\"89\"}]}]}";
             }
             catch(FileNotFoundException e)
             {
                 result = "Wrong Username or Password";
+                //result = "{\"name\":\"Rajeev\",\"username\":\"rajeev14084\",\"password\":\"sdgs\",\"rooms\":[{\"name\":\"Dining Room\",\"devices\":[{\"name\":\"fan\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"192.167.0.8\",\"Port\":\"89\"}]},{\"name\":\"Play\",\"devices\":[{\"name\":\"Fan\",\"status\":false,\"IP_Addr\":\"157.89.89.88\",\"Port\":\"80\"},{\"name\":\"Bulb\",\"status\":false,\"IP_Addr\":\"35.78.79.65\",\"Port\":\"80\"}]},{\"name\":\"Hall\",\"devices\":[{\"name\":\"Camera\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"TV\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"}]},{\"name\":\"Bed Room\",\"devices\":[{\"name\":\"bulb\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"477\",\"Port\":\"89\"}]}]}";
             }
             catch(UnknownHostException e)
             {
-                result = "Connection Problem";
+                result = "Internal Server Problem";
+                //result = "{\"name\":\"Rajeev\",\"username\":\"rajeev14084\",\"password\":\"sdgs\",\"rooms\":[{\"name\":\"Dining Room\",\"devices\":[{\"name\":\"fan\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"192.167.0.8\",\"Port\":\"89\"}]},{\"name\":\"Play\",\"devices\":[{\"name\":\"Fan\",\"status\":false,\"IP_Addr\":\"157.89.89.88\",\"Port\":\"80\"},{\"name\":\"Bulb\",\"status\":false,\"IP_Addr\":\"35.78.79.65\",\"Port\":\"80\"}]},{\"name\":\"Hall\",\"devices\":[{\"name\":\"Camera\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"TV\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"}]},{\"name\":\"Bed Room\",\"devices\":[{\"name\":\"bulb\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"477\",\"Port\":\"89\"}]}]}";
             }
             catch(Exception e)
             {
                 result = "Error Occurred";
-                e.printStackTrace();
+                //result = "{\"name\":\"Rajeev\",\"username\":\"rajeev14084\",\"password\":\"sdgs\",\"rooms\":[{\"name\":\"Dining Room\",\"devices\":[{\"name\":\"fan\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"192.167.0.8\",\"Port\":\"89\"}]},{\"name\":\"Play\",\"devices\":[{\"name\":\"Fan\",\"status\":false,\"IP_Addr\":\"157.89.89.88\",\"Port\":\"80\"},{\"name\":\"Bulb\",\"status\":false,\"IP_Addr\":\"35.78.79.65\",\"Port\":\"80\"}]},{\"name\":\"Hall\",\"devices\":[{\"name\":\"Camera\",\"status\":false,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"TV\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"}]},{\"name\":\"Bed Room\",\"devices\":[{\"name\":\"bulb\",\"status\":true,\"IP_Addr\":\"192.168.0.1\",\"Port\":\"80\"},{\"name\":\"Light\",\"status\":false,\"IP_Addr\":\"477\",\"Port\":\"89\"}]}]}";
+               // e.printStackTrace();
             }
             return result;
         }
@@ -156,9 +159,8 @@ public class home extends AppCompatActivity {
                                 System.out.println(array.getJSONObject(i).get("devices"));
                             }
                         }
-                        Intent i = new Intent(context, Homepage.class);
-                        i.putExtra("user", user);
-                        startActivity(i);
+                        new GetStatus(context,user).execute();
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();

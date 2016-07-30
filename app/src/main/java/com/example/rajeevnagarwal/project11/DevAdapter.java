@@ -3,6 +3,7 @@ package com.example.rajeevnagarwal.project11;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,12 +31,17 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -46,13 +52,16 @@ import java.util.Date;
 public class DevAdapter extends BaseAdapter {
     String IP,Port,Param;
     private Context context;
-    int pos;
     private int selectedYear=0,selectedMonth=0,selectedDayOfMonth=0;
+    private User user;
     private ArrayList<Devices> devlist;
-    public DevAdapter(Context context,ArrayList<Devices> devlist)
+    private Integer pos;
+    public DevAdapter(Context context,ArrayList<Devices> devlist,User user,Integer pos)
     {
         this.context = context;
         this.devlist = devlist;
+        this.user = user;
+        this.pos = pos;
     }
     @Override
     public int getCount() {
@@ -67,10 +76,7 @@ public class DevAdapter extends BaseAdapter {
         if(convertView == null) {
 
             gridView = inflater.inflate(R.layout.devitem, null);
-
-
         }
-
             else
         {
             gridView = convertView;
@@ -88,7 +94,6 @@ public class DevAdapter extends BaseAdapter {
                 sw.setChecked(true);
                 sw.setText("ON");
             }
-            pos = position;
             txt.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -116,14 +121,17 @@ public class DevAdapter extends BaseAdapter {
                     form.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface arg0, int arg1) {
                                     Intent intent = new Intent(context, AlarmReciever.class);
-                                    System.out.println("Plz" + devlist.get(position).getName());
-                                    System.out.println(selectedDayOfMonth + ":" + selectedMonth + ":" + selectedYear);
-                                    System.out.println(tm.getCurrentHour() + ":" + tm.getCurrentMinute());
                                     intent.putExtra("devlist",devlist);
                                     intent.putExtra("pos",position);
                                     PendingIntent pendingIntent = PendingIntent.getBroadcast(
                                             context,0, intent,PendingIntent.FLAG_UPDATE_CURRENT);
+                                    if(selectedYear==0&&selectedMonth==0&&selectedDayOfMonth==0)
+                                    {
+                                        selectedYear = dt.getYear();
+                                        selectedMonth = dt.getMonth();
+                                        selectedDayOfMonth = dt.getDayOfMonth();
 
+                                    }
                                     Calendar cal = Calendar.getInstance();
                                     cal.set(Calendar.YEAR,selectedYear);
                                     cal.set(Calendar.MONTH, selectedMonth);
@@ -132,8 +140,6 @@ public class DevAdapter extends BaseAdapter {
                                     cal.set(Calendar.MINUTE, tm.getCurrentMinute());
                                     cal.set(Calendar.SECOND, 0);
                                     long millis = cal.getTimeInMillis();
-                                    System.out.println(millis);
-                                    System.out.println(""+cal.getTime().getDate()+cal.getTime().getMonth()+cal.getTime().getYear()+cal.getTime().getHours()+cal.getTime().getMinutes()+cal.getTime().getSeconds());
                                     if(cal.compareTo(Calendar.getInstance())<=0)
                                     {
                                         Toast.makeText(context,
@@ -175,18 +181,23 @@ public class DevAdapter extends BaseAdapter {
 
                         devlist.get(position).getLogin().add(new Date());
                         sw.setText("ON");
+                        devlist.get(position).setStatus(true);
+                        Date dt = devlist.get(position).getLogin().get(devlist.get(position).getLogin().size()-1);
+                        //new ChangeStatus(context).execute(dt.getTime(),1L,new Integer(position).longValue());
                         IP = devlist.get(position).getIP_Addr();
                         Port = devlist.get(position).getPort();
                         Param = "1";
                         System.out.println(IP+Port+Param);
-                        new HttpRequestAsyncTask(context, Param, IP, Port, "pin"
+                       new HttpRequestAsyncTask(context, Param, IP, Port, "pin"
                         ).execute();
 
 
                     } else {
 
                         devlist.get(position).getLogout().add(new Date());
+                        Date dt = devlist.get(position).getLogout().get(devlist.get(position).getLogout().size()-1);
                         sw.setText("OFF");
+                        devlist.get(position).setStatus(false);
                         IP = devlist.get(position).getIP_Addr();
                         Port = devlist.get(position).getPort();
                         Param = "0";
@@ -230,15 +241,13 @@ public class DevAdapter extends BaseAdapter {
 
         try {
 
-            HttpClient httpclient = new DefaultHttpClient(); // create an HTTP client
-            // define the URL e.g. http://myIpaddress:myport/?pin=13 (to toggle pin 13 for example)
-            //URI website = new URI("http://"+ipAddress+":"+portNumber+"/?"+parameterName+"="+parameterValue);
+            HttpClient httpclient = new DefaultHttpClient();
             System.out.println("hack"+ipAddress);
             System.out.println(portNumber);
             System.out.println(parameterValue);
 
             URI website = new URI("http://"+ipAddress+"/PIN_"+parameterValue);
-            //URI website = new URI("http://"+ipAddress+"/PIN_08_1"); //?"+parameterName+"="+parameterValue);
+
 
             HttpGet getRequest = new HttpGet(); // create an HTTP GET object
             getRequest.setURI(website); // set the URL of the GET request
@@ -345,6 +354,77 @@ public class DevAdapter extends BaseAdapter {
             {
                  //alertDialog.show();
             }
+        }
+
+    }
+
+    private class ChangeStatus extends AsyncTask<Long, String, String>
+    {
+        private Context context;
+        public ChangeStatus(Context context)
+        {
+            this.context = context;
+        }
+        protected void onPreExecute()
+        {
+            super.onPreExecute();
+        }
+        protected String doInBackground(Long... obj) {
+
+            OutputStream os = null;
+            HttpURLConnection conn = null;
+            String res=null;
+            Long time = obj[0];
+            Long status = obj[1];
+            Long position = obj[2];
+            Date dt = new Date();
+            String d = dt.toString();
+            System.out.println(user.getRooms().get(pos).getName());
+            System.out.println(position);
+            System.out.println(time);
+            System.out.println(d);
+            System.out.println(status);
+            String data = d + " "+time+" "+status+" "+user.getRooms().get(pos).getName()+" "+user.getRooms().get(pos).getDev().get(Integer.parseInt(""+position)).getName();
+            System.out.println(data);
+            try {
+                String link = Link.link + "/project11/"+user.getUsername()+"/StoreTimeStamps.php";
+                URL url = new URL(link);
+                conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(10000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+                conn.setFixedLengthStreamingMode(data.getBytes().length);
+                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+                conn.connect();
+                os = new BufferedOutputStream(conn.getOutputStream());
+                os.write(data.getBytes());
+                os.flush();
+                BufferedReader bufferedReader;
+                bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                res = bufferedReader.readLine();
+                System.out.println(res);
+                return res;
+
+            }
+            catch(MalformedURLException e)
+            {
+                e.printStackTrace();
+            }
+            catch(IOException e)
+            {
+                e.printStackTrace();
+            }
+
+
+        return res;
+        }
+        protected void onPostExecute(String result)
+        {
+            System.out.println("Hello"+result);
+
         }
 
     }

@@ -28,8 +28,9 @@ public class AlarmReciever extends BroadcastReceiver {
                 new Intent(context, AlarmReciever.class), 0);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
-                        .setContentTitle("xyz")
-                        .setContentText("It will contain dummy content");
+                        .setSmallIcon(R.mipmap.android_logo)
+                        .setContentTitle("Alert")
+                        .setContentText("Mind your "+dev.get(pos).getName());
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setDefaults(Notification.DEFAULT_SOUND);
         mBuilder.setAutoCancel(true);
