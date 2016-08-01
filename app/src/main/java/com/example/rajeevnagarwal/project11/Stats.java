@@ -121,6 +121,8 @@ public class Stats extends AppCompatActivity {
             int position = 0;
             Float diff = new Float(0);
             for(int i=0;i<listw.size();i++)
+                System.out.println(listw.get(i));
+            for(int i=0;i<listw.size();i++)
             {
                 if(listw.get(i).contains("For"))
                 {
@@ -140,7 +142,7 @@ public class Stats extends AppCompatActivity {
                             {
                                 diff = (Float.parseFloat(listw.get(i).split(" ")[0])-Float.parseFloat(listw.get(i-1).split(" ")[0]));
                                 System.out.println(diff);
-                                diff = (diff/1000/3600);
+                                diff = (diff/3600);
                                 System.out.println(diff);
                                 if(!login.containsKey(""+position))
                                 {
@@ -192,6 +194,8 @@ public class Stats extends AppCompatActivity {
             int position = 0;
             Float diff = new Float(0);
             for(int i=0;i<listm.size();i++)
+                System.out.println(listm.get(i));
+            for(int i=0;i<listm.size();i++)
             {
                 if(listm.get(i).contains("For"))
                 {
@@ -211,7 +215,7 @@ public class Stats extends AppCompatActivity {
                             {
                                 diff = (Float.parseFloat(listm.get(i).split(" ")[0])-Float.parseFloat(listm.get(i-1).split(" ")[0]));
                                 System.out.println(diff);
-                                diff = (diff/1000/3600);
+                                diff = (diff/3600);
                                 System.out.println(diff);
                                 if(!login.containsKey(""+position))
                                 {
@@ -257,6 +261,8 @@ public class Stats extends AppCompatActivity {
             ArrayList<Entry> entries = new ArrayList<Entry>();
             ArrayList<String> lables = new ArrayList<String>();
             LineChart lineChart = new LineChart(context);
+            for(int i=0;i<list.size();i++)
+                System.out.println(list.get(i));
             for(int i=0;i<list.size();i++)
             {
 
@@ -363,7 +369,7 @@ public class Stats extends AppCompatActivity {
             String date = "" + args[0].getDate();
             String week = dtod(args[0].getDay());
             String result = "";
-                String link = Link.link + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/getWeekly.php";
+                String link = new Link().getLink() + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/getWeekly.php";
                 try {
                     URL url = new URL(link);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -374,7 +380,7 @@ public class Stats extends AppCompatActivity {
                     for(int i=array.length-1;i>=0;i--)
                     {
                         listm.add("For "+array[i]);
-                        link = Link.link + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/"+array[i]+".txt";
+                        link = new Link().getLink() + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/"+array[i]+".txt";
                         url = new URL(link);
                         con = (HttpURLConnection)url.openConnection();
                         bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -418,6 +424,7 @@ public class Stats extends AppCompatActivity {
         }
 
         protected String doInBackground(Date... args) {
+            list.clear();
             String username = user.getUsername();
             String room = user.getRooms().get(posroom).getName();
             if (room.contains(" ")) {
@@ -430,7 +437,7 @@ public class Stats extends AppCompatActivity {
             String year = "" + (args[0].getYear() + 1900);
             System.out.println(year);
             Long timestamps = args[0].getTime();
-            String link = Link.link + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/GetDaily.php";
+            String link = new Link().getLink() + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/GetDaily.php";
             //link = link+"?username="+username+"&password="+password;
             String result = "";
             System.out.println(link);
@@ -440,7 +447,7 @@ public class Stats extends AppCompatActivity {
                 BufferedReader bufferedReader;
                 bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 result = bufferedReader.readLine();
-                link = Link.link + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/"+result+".txt";
+                link = new Link().getLink() + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/"+result+".txt";
                 System.out.println(link);
                 url = new URL(link);
                 con = (HttpURLConnection) url.openConnection();
@@ -484,7 +491,7 @@ public class Stats extends AppCompatActivity {
             super.onPreExecute();
         }
         protected String doInBackground(Date... args) {
-            listm.clear();
+            listw.clear();
             String username = user.getUsername();
             String room = user.getRooms().get(posroom).getName();
             if (room.contains(" ")) {
@@ -496,7 +503,7 @@ public class Stats extends AppCompatActivity {
             System.out.println(room);
             String device = devlist.get(pos).getName();
             String result = "";
-            String link = Link.link + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/getMonthly.php";
+            String link = new Link().getLink() + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/getMonthly.php";
             try {
                 URL url = new URL(link);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -507,7 +514,7 @@ public class Stats extends AppCompatActivity {
                 for(int i=array.length-1;i>=0;i--)
                 {
                     listw.add("For "+array[i]);
-                    link = Link.link + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/"+array[i]+".txt";
+                    link = new Link().getLink() + "/project11/" + username + "/Rooms/" + room + "/devices/" + device + "/"+array[i]+".txt";
                     url = new URL(link);
                     con = (HttpURLConnection)url.openConnection();
                     bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
